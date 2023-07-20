@@ -17,10 +17,35 @@ interface Tile {
   colorCode: string;
 }
 
-class Air implements Tile {
+class BaseTile implements Tile {  
+  explode(x: number, y: number, type: Tile): void {
+    map[y][x] = type;
+  }
+  move(x: number, y: number): void {}
+  gameover(): void {}
+  update(x: number, y: number): void {}
+  moveUpToThis(x: number, y: number): void {
+    map[y][x] = new MonsterRight();
+  }
+  moveDownTothis(x: number, y: number): void {
+    map[y][x] = new MonsterLeft();
+  }
+  moveLeftToThis(x: number, y: number): void {
+    map[y][x] = new MonsterUp();
+  }
+  moveRightToThis(x: number, y: number): void {
+    map[y][x] = new MonsterDown();
+  }
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   colorCode: string = null;
+}
+
+class Air implements Tile {
+  private baseTile = new BaseTile();
+  fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {}
+  colorCode: string = this.baseTile.colorCode;
   moveDownTothis(x: number, y: number): void {
     map[y][x] = new Air();
     map[y + 1][x] = new TmpMonsterDown();
@@ -38,11 +63,13 @@ class Air implements Tile {
     map[y - 1][x] = new MonsterUp();    
   }
   update(x: number, y: number): void {
+    this.baseTile.update(x, y);
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
     playery += y;
@@ -51,54 +78,58 @@ class Air implements Tile {
 }
 
 class Unbreakable implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#999999";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
-    
+    this.baseTile.update(x, y);
   }
   gameover(): void {
+this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {}
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class Stone implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#0000cc";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
-    
+    this.baseTile.update(x, y);
   }
   gameover(): void {
+this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
     if (Math.random() < 0.1) 
@@ -107,88 +138,93 @@ class Stone implements Tile {
       map[y][x] = type;
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class Bomb implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#770000";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x] = new BombClose();
   }
   gameover(): void {
+this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
     bombs++;
     map[y][x] = type;
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class BombClose implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#cc0000";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x] = new BombReallyClose();
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
     bombs++;
     map[y][x] = type;
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class BombReallyClose implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#ff0000";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     explode(x + 0, y - 1, new Fire());
@@ -199,62 +235,66 @@ class BombReallyClose implements Tile {
     map[y][x] = new Fire();
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
     bombs++;
     map[y][x] = type;
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class TmpFire implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
-  colorCode: string = null;
+  colorCode: string = this.baseTile.colorCode;
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x] = new Fire();
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class Fire implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#ffcc00";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x] = new Air();
@@ -263,7 +303,7 @@ class Fire implements Tile {
     gameOver = true;
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
     playery += y;
@@ -272,29 +312,31 @@ class Fire implements Tile {
 }
 
 class ExtraBomb implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#00cc00";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
-    
+    this.baseTile.update(x, y);
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
     playery += y;
@@ -305,21 +347,22 @@ class ExtraBomb implements Tile {
 }
 
 class MonsterUp implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#cc00cc";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y - 1][x].moveUpToThis(x, y);
@@ -328,29 +371,30 @@ class MonsterUp implements Tile {
     gameOver = true;
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class MonsterRight implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#cc00cc";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x + 1].moveRightToThis(x, y);
@@ -359,59 +403,62 @@ class MonsterRight implements Tile {
     gameOver = true;
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class TmpMonsterRight implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
-  colorCode: string = null;
+  colorCode: string = this.baseTile.colorCode;
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class MonsterDown implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#cc00cc";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y + 1][x].moveDownTothis(x, y);
@@ -420,59 +467,62 @@ class MonsterDown implements Tile {
     gameOver = true;
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class TmpMonsterDown implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
-  colorCode: string = null;
+  colorCode: string = this.baseTile.colorCode;
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   gameover(): void {
+    this.baseTile.gameover();
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
 class MonsterLeft implements Tile {
+  private baseTile = new BaseTile();
   fillRect(x: number, y: number, g: CanvasRenderingContext2D): void {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    this.baseTile.fillRect(x, y, g);
   }
   colorCode: string = "#cc00cc";
   moveDownTothis(x: number, y: number): void {
-    map[y][x] = new MonsterLeft();
+    this.baseTile.moveDownTothis(x, y);
   }
   moveLeftToThis(x: number, y: number): void {
-    map[y][x] = new MonsterUp();
+    this.baseTile.moveLeftToThis(x, y);
   }
   moveRightToThis(x: number, y: number): void {
-    map[y][x] = new MonsterDown();
+    this.baseTile.moveRightToThis(x, y);
   }
   moveUpToThis(x: number, y: number): void {
-    map[y][x] = new MonsterRight();
+    this.baseTile.moveUpToThis(x, y);
   }
   update(x: number, y: number): void {
     map[y][x - 1].moveLeftToThis(x, y);
@@ -481,10 +531,10 @@ class MonsterLeft implements Tile {
     gameOver = true;
   }
   explode(x: number, y: number, type: Tile): void {
-    map[y][x] = type;
+    this.baseTile.explode(x, y, type);
   }
   move(x: number, y: number): void {
-    
+    this.baseTile.move(x, y);
   }
 }
 
